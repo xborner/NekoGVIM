@@ -1,0 +1,220 @@
+source $VIMRUNTIME/vimrc_example.vim
+source $VIMRUNTIME/mswin.vim
+behave mswin
+
+
+" 默认折叠配置文件 {{{
+filetype indent plugin on
+set foldmethod=marker
+
+ "vim 文件折叠方式为 marker
+"augroup ft_vim
+"    au!
+"
+"    au FileType vim setlocal foldmethod=marker
+"augroup END
+" }}}
+
+"其他 {{{
+"设置默认工作目录
+cd D:\work\MyCode\vimfile
+"set viewdir=C:\soft\install\dev\gvim\Vim\vim82\view
+"au BufWinEnter *.* silent loadview  "每次退出时自动保存折叠信息 主要针对手工折叠
+"au BufWinLeave *.* silent mkview  "每次打开时自动载入折叠信息 ，主要针对手工折叠
+
+set diffexpr=MyDiff()
+function MyDiff()
+  let opt = '-a --binary '
+  if &diffopt =~ 'icase' | let opt = opt . '-i ' | endif
+  if &diffopt =~ 'iwhite' | let opt = opt . '-b ' | endif
+  let arg1 = v:fname_in
+  if arg1 =~ ' ' | let arg1 = '"' . arg1 . '"' | endif
+  let arg2 = v:fname_new
+  if arg2 =~ ' ' | let arg2 = '"' . arg2 . '"' | endif
+  let arg3 = v:fname_out
+  if arg3 =~ ' ' | let arg3 = '"' . arg3 . '"' | endif
+  if $VIMRUNTIME =~ ' '
+    if &sh =~ '\<cmd'
+      if empty(&shellxquote)
+        let l:shxq_sav = ''
+        set shellxquote&
+      endif
+      let cmd = '"' . $VIMRUNTIME . '\diff"'
+    else
+      let cmd = substitute($VIMRUNTIME, ' ', '" ', '') . '\diff"'
+    endif
+  else
+    let cmd = $VIMRUNTIME . '\diff'
+  endif
+  silent execute '!' . cmd . ' ' . opt . arg1 . ' ' . arg2 . ' > ' . arg3
+  if exists('l:shxq_sav')
+    let &shellxquote=l:shxq_sav
+  endif
+endfunction
+"}}}
+
+"通用 {{{
+if has("multi_byte") 
+    " UTF-8 编码 
+    set encoding=utf-8 
+    set termencoding=utf-8 
+    set formatoptions+=mM 
+    set fencs=utf-8,gbk 
+    if v:lang =~? '^/(zh/)/|/(ja/)/|/(ko/)' 
+        set ambiwidth=double 
+    endif 
+    if has("win32") 
+        source $VIMRUNTIME/delmenu.vim 
+        source $VIMRUNTIME/menu.vim 
+        language messages zh_CN.utf-8 
+    endif 
+else 
+    echoerr "Sorry, this version of (g)vim was not compiled with +multi_byte" 
+endif
+
+"------------------基本设置------------------------
+set helplang=cn,en
+set ts=4
+set expandtab
+set autoindent 
+set nu!
+set history=1024
+set clipboard+=unnamed
+" 设置 alt 键不映射到菜单栏
+"set guifont=Bitstream_Vera_Sans_Mono:h14:cANSI
+
+"set guioptions+=aA       " get some autoselect interaction with the system clipboard
+"可视模式选中的词都会写进剪贴板
+
+syntax enable 
+syntax on
+"}}}
+
+" GUI {{{
+set cursorline
+set hlsearch
+" 中英文字体设置
+set guifont=Consolas:h14:cANSI
+set gfw=幼圆:h14:b
+" 窗口大小
+set lines=35 columns=140
+" 分割出来的窗口位于当前窗口下边/右边
+set splitbelow
+set splitright
+"不显示工具/菜单栏
+set guioptions-=T
+set guioptions-=m
+set guioptions-=L
+set guioptions-=r
+set guioptions-=b
+" 使用内置 tab 样式而不是 gui
+set guioptions-=e
+set nolist
+" }}}
+
+"{{{插件
+"加载 vim 插件管理
+execute pathogen#infect()
+
+"vim-material 主题
+" Dark
+set background=dark
+colorscheme vim-material
+"colorscheme desert 
+
+"vim-powerline
+" 设置状态栏主题风格
+let g:Powerline_colorscheme='solarized256'
+" 总是显示状态栏
+set laststatus=2"
+"NERDTree 文件目录树
+"if exists('g:NERDtree')
+"    autocmd vimenter * NERDTree E:\vimfile
+"endif
+
+"vim启动时启用 auto-popup（默认启动时候就已经启动了 auto-popup 了
+let g:acp_enableAtStartUp = 1
+" 输入一个字母即可补全
+let g:acp_behaviorKeywordLength = 1
+" 自动弹出是由键映射
+let g:AutoComplPop_MappingDriven = 1
+" 修改GUI高亮参数 该设置全局有效
+hi Pmenu guibg=#444444
+hi PmenuSel ctermfg=7 ctermbg=4 guibg=#555555 guifg=#ffffff
+
+"}}}
+
+"{{{---------将键盘上的 F4 功能键映射为添加作者信息的快捷键----------------
+map <F4> ms:call TitleDet()<cr>'s
+function AddTitle()
+        call append(0,"#!/bin/bash")
+        call append(1,"# * ******************************************************************************")
+        call append(2,"# * Author: xborner")
+        call append(3,"# * Email: xbornerw@gmail.com")
+        call append(4,"# * Last modified: ".strftime("%Y-%m-%d %H:%M"))
+        call append(5,"# * Filename: ".expand("%:t"))
+        call append(6,"# * Version: 1.0.4")
+        call append(7,"# * Description: ")
+        call append(8,"# * *****************************************************************************")
+        echohl WarningMsg | echo "Successful in adding the copyright." | echohl None
+endf
+
+"更新最近修改时间和文件名
+function UpdateTitle()
+        normal m'
+        execute '/# *Last modified:/s@:.*$@\=strftime(":\t%Y-%m-%d %H:%M")@'
+        normal "
+        normal mk
+        execute '/# *Filename:/s@:.*$@\=":\t\t".expand("%:t")@'
+        execute "noh"
+        normal 'k
+        echohl WarningMsg | echo "Successful in updating the copy right."| echohl None
+endfunction
+
+set iminsert=2
+
+"判断前10行代码里面，是否有Last modified这个单词，
+"如果没有的话，代表没有添加过作者信息，需要新添加；
+"如果有的话，那么只需要更新即可
+function TitleDet()
+        let n=1
+        while n < 10
+                let line = getline(n)
+                if line =~'^\#\s*\S*Last\smodified:\S*.*$'
+                        call UpdateTitle()
+                        return
+                endif
+                let n = n + 1
+        endwhile
+        call AddTitle()
+endfunction
+"}}}
+
+"{{{ "禁止生成 ~ 备份文件
+set noundofile
+set nobackup
+set noswapfile
+"}}}
+
+"{{{ 宏
+"一列文本转换为 'test', 'test1' 形式
+let @s=":%s/^/'/g:%s/$/'/ggg999999J:%s/ /, /g"
+"格式化输出 qq 聊天记录消息
+"let @e=":%s/\([\u4e00-\u9fa5]\+\)[-_]\([\u4e00-\u9fa5]\+\)(\(\d\+\))/\1\t\2\tqq:\3" 匹配中文出问题？
+":%s/[-_]/\t/g:%s/(\(\d\+\))/\tqq:\1/g 实际配置文件中需要转换成下面这种形式才能正常执行
+let @e=":%s/[-_]/\\t/g:%s/(\\(\\d\\+\\))/\\tqq:\\1/g"
+let @k=":%s/\\s\\+//g"
+let @d=":%s/\\s\\+/\\t/g"
+"}}}
+
+"{{{ 按键映射
+"将 ESC 键映射为 jk 键                                      
+inoremap jk <Esc>
+
+"快捷键启动目录树
+map <C-n> :NERDTreeToggle<CR>
+"取消 CTRL+F 默认查找，替换成翻页
+unmap <C-F>
+"取消 CTRL+A 默认全选，替换成序号增加
+unmap <C-A>
+"}}}
