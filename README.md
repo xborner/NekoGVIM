@@ -10,22 +10,31 @@
 
 ## 效果
 
-![gvim_conf1.png](https://s2.loli.net/2022/04/05/R8q69lxwKp57nhI.png)
+![gvim_ex.png](./assets/README-1664254652226.png)
 
 ## 使用方法
 
-根据是否已安装 GVIM 来从下面两种方式选择一种来安装使用：
+直接官网下载替换配置文件或是克隆本项目，选择下面的一种方式完成。
 
-1. 下载解压本项目，直接运行二进制文件 `.\Vim\vim82\gvim.exe`；
+**第一次使用请更改配置文件中的 `cd ~` 路径，不然打开不存在的路径会报错，其他根据个人需求去更改。**
 
-2. 官网下载安装 GVIM，完成后替换相应的配置文件。
-  - 将本项目中 `.\Vim\vim82\autoload\pathogen.vim` 拷贝到对应的位置；
-  - 将本项目中 `.\Vim\vim82\bundle` 拷贝到对应的位置；
-  - 将本项目中 `.\Vim\_vimrc` 拷贝到对应的位置（拷贝前记得备份原来的配置文件）。
+1. 官网下载 [GVIM](https://www.vim.org/download.php) 并安装。  
+将本项目中以下文件拷贝到软件的对应位置：
+`.\Vim\vim82\autoload\pathogen.vim`  
+`.\Vim\vim82\bundle`   
+`.\Vim\_vimrc`
+
+2. 下载解压本项目，直接运行二进制文件 `.\Vim\vim82\gvim.exe`，目前版本 8.2.1258；
 
 ## 部分配置说明
 
 配置文件 `.\Vim\_vimrc` 中有详细说明，配置了舒适的 ui、添加了一些插件、设置了一些快捷键映射等。
 
-第一次使用请更改配置文件中的 `cd ~` 路径，不然打开不存在的路径会报错，其他根据个人需求去更改。
+安装了插件 AutoComplPop、nerdtree、vim-markdown 等。
 
+部分快捷键：
+
+[F4] 生成头部注释  
+[CTRL-N] 生成目录树  
+将 ESC 键映射为 jk 键                                      
+...
