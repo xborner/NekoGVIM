@@ -196,15 +196,43 @@ set nobackup
 set noswapfile
 "}}}
 
+"{{{ 删除但不剪切
+nnoremap x "_x
+nnoremap X "_X
+nnoremap d "_d
+nnoremap dd "_dd
+nnoremap D "_D
+vnoremap d "_d
+vnoremap dd "_dd
+
+nnoremap <leader>x ""x
+nnoremap <leader>X ""X
+nnoremap <leader>d ""d
+nnoremap <leader>dd ""dd
+nnoremap <leader>D ""D
+vnoremap <leader>d ""d
+vnoremap <leader>dd ""dd
+"}}}
+
 "{{{ 宏
 "一列文本转换为 'test', 'test1' 形式
-let @s=":%s/^/'/g:%s/$/'/ggg999999J:%s/ /, /g"
+let @s=":%s/^/'/g
+:%s/$/'/g
+gg999999J:%s/ /, /g
+"
 "格式化输出 qq 聊天记录消息
-"let @e=":%s/\([\u4e00-\u9fa5]\+\)[-_]\([\u4e00-\u9fa5]\+\)(\(\d\+\))/\1\t\2\tqq:\3" 匹配中文出问题？
-":%s/[-_]/\t/g:%s/(\(\d\+\))/\tqq:\1/g 实际配置文件中需要转换成下面这种形式才能正常执行
-let @e=":%s/[-_]/\\t/g:%s/(\\(\\d\\+\\))/\\tqq:\\1/g"
-let @k=":%s/\\s\\+//g"
-let @d=":%s/\\s\\+/\\t/g"
+"let @e=":%s/\([\u4e00-\u9fa5]\+\)[-_]\([\u4e00-\u9fa5]\+\)(\(\d\+\))/\1\t\2\tqq:\3
+" 匹配中文出问题？
+":%s/[-_]/\t/g
+:%s/(\(\d\+\))/\tqq:\1/g
+ 实际配置文件中需要转换成下面这种形式才能正常执行
+let @e=":%s/[-_]/\\t/g
+:%s/(\\(\\d\\+\\))/\\tqq:\\1/g
+"
+let @k=":%s/\\s\\+//g
+"
+let @d=":%s/\\s\\+/\\t/g
+"
 "}}}
 
 "{{{ 按键映射
